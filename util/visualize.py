@@ -7,7 +7,7 @@ import optparse
 
 import pylab
 
-from path import ConfigSpace, Bug1
+from pathplan import ConfigSpace, Bug1
 
 
 def lookup_algorithm(string):
@@ -42,7 +42,7 @@ def main(options, args):
   ax.plot(cs.goal[0], cs.goal[1], 'go')
 
   for pos in pathfinder.search():
-    ax.plot(pos[1], pos[0], "rx")
+    ax.plot(pos[1], pos[0], "r.")
     pylab.gcf().canvas.draw()
 
   while True: 
