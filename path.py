@@ -127,9 +127,8 @@ class Bug1(Pathfinder):
         break
       yield tuple(point)
 
-  def evade(self, pos, goal):
+  def evade(self, pos, goal, visited):
     print "Started evasion..."
-    visited = set([pos])
     for candpos in self.dfs(pos, visited):
       if not self.configspace.clearance(candpos):
         continue
@@ -148,6 +147,7 @@ class Bug1(Pathfinder):
   def search(self):
     pos = self.configspace.start
     goal = self.configspace.goal
+    visited = set()
 
     while True:
       for point in self.approach(pos, goal):
@@ -156,7 +156,7 @@ class Bug1(Pathfinder):
       if pos == goal:
         raise StopIteration("Goal reached.") 
       else:
-        for point in self.evade(pos, goal):
+        for point in self.evade(pos, goal, visited):
           pos = point
           yield pos
           if pos == goal:
