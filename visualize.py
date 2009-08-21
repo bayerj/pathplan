@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
+import sys
 import optparse
 
 import pylab
@@ -9,9 +10,13 @@ import pylab
 from path import ConfigSpace, Bug1
 
 
+def lookup_algorithm(string):
+  return Bug1
+
+
 def make_optparser():
   parser = optparse.OptionParser()
-  parser.add_option('-i', type='string', dest='configfile'
+  parser.add_option('-f', type='string', dest='configfile',
                     help='configuration file')
   parser.add_option('-a', type='string', dest='algorithm',
                     help='algorithm to use')
@@ -19,16 +24,29 @@ def make_optparser():
                     help='start of the robot. e.g. "2,3". No spaces.')
   parser.add_option('-g', type='string', dest='goal',
                     help='goal of the robot. e.g. "2,3". No spaces.')
+  return parser
 
 
 def main(options, args):
+  pylab.ion()
   cs = ConfigSpace.from_png(options.configfile)
-  cs.start = options.start.split(',')
-  cs.goal = options.goal.split(',')
+  cs.start = [int(i) for i in options.start.split(',')]
+  cs.goal = [int(i) for i in options.goal.split(',')]
 
   pathfinder = lookup_algorithm(options.algorithm)(cs)
+
+  fig = pylab.figure()
+  ax = fig.add_subplot(111)
+  ax.imshow(pylab.imread(options.configfile))
+  ax.plot(cs.start[0], cs.start[1], 'bo')
+  ax.plot(cs.goal[0], cs.goal[1], 'go')
+
   for pos in pathfinder.search():
-    print pos
+    ax.plot(pos[1], pos[0], "rx")
+    pylab.gcf().canvas.draw()
+
+  while True: 
+    pass
 
 
 if __name__ == '__main__':
